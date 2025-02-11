@@ -1,4 +1,4 @@
-package com.duckyshine.app.model;
+package com.duckyshine.app.model.texture;
 
 import java.util.Arrays;
 

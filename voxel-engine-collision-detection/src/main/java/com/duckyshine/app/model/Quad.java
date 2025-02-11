@@ -6,6 +6,8 @@ import org.joml.Vector3i;
 
 import com.duckyshine.app.math.Direction;
 
+import com.duckyshine.app.model.texture.Texture;
+
 import com.duckyshine.app.debug.Debug;
 
 public class Quad {

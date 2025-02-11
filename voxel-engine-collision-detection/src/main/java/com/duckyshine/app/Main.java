@@ -8,8 +8,11 @@ import org.lwjgl.system.*;
 import com.duckyshine.app.camera.Camera;
 
 import com.duckyshine.app.display.Display;
-import com.duckyshine.app.model.Atlas;
+
+import com.duckyshine.app.model.texture.Atlas;
+
 import com.duckyshine.app.physics.controller.Player;
+
 import com.duckyshine.app.scene.Scene;
 
 import com.duckyshine.app.shader.Shader;

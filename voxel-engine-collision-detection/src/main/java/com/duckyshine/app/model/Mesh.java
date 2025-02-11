@@ -9,6 +9,8 @@ import com.duckyshine.app.math.Direction;
 
 import com.duckyshine.app.math.noise.Noise;
 
+import com.duckyshine.app.model.texture.Texture;
+
 import com.duckyshine.app.buffer.Buffer;
 import com.duckyshine.app.buffer.BufferData;
 import com.duckyshine.app.buffer.MeshBuffer;

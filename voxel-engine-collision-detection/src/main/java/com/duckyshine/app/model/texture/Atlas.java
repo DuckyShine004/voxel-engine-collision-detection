@@ -1,4 +1,4 @@
-package com.duckyshine.app.model;
+package com.duckyshine.app.model.texture;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -19,6 +19,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import com.duckyshine.app.math.Direction;
+
+import com.duckyshine.app.model.BlockType;
 
 import com.duckyshine.app.utility.ResourceFinder;
 
