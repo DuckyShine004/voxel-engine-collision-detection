@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class Debug {
     private static final String RED = "\u001B[31m";
@@ -29,6 +30,12 @@ public class Debug {
 
         if (object instanceof Vector3f) {
             Vector3f vector = (Vector3f) object;
+
+            return "[" + vector.x + ", " + vector.y + ", " + vector.z + "]";
+        }
+
+        if (object instanceof Vector3i) {
+            Vector3i vector = (Vector3i) object;
 
             return "[" + vector.x + ", " + vector.y + ", " + vector.z + "]";
         }

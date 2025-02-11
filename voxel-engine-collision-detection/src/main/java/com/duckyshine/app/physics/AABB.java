@@ -2,6 +2,8 @@ package com.duckyshine.app.physics;
 
 import org.joml.Vector3f;
 
+import com.duckyshine.app.math.Axis;
+
 public class AABB {
     private Vector3f min;
     private Vector3f max;
@@ -14,6 +16,50 @@ public class AABB {
     public AABB(Vector3f min, Vector3f max) {
         this.min = min;
         this.max = max;
+    }
+
+    public AABB getOffset(float offset, Axis axis) {
+        switch (axis) {
+            case X:
+                return new AABB(
+                        this.min.x + offset,
+                        this.min.y,
+                        this.min.z,
+                        this.max.x + offset,
+                        this.max.y,
+                        this.max.z);
+            case Y:
+                return new AABB(
+                        this.min.x,
+                        this.min.y + offset,
+                        this.min.z,
+                        this.max.x,
+                        this.max.y + offset,
+                        this.max.z);
+            case Z:
+                return new AABB(
+                        this.min.x,
+                        this.min.y,
+                        this.min.z + offset,
+                        this.max.x,
+                        this.max.y,
+                        this.max.z + offset);
+            default:
+                return this;
+        }
+    }
+
+    public float getCentre(Axis axis) {
+        switch (axis) {
+            case X:
+                return (this.min.x + this.max.x) / 2.0f;
+            case Y:
+                return (this.min.y + this.max.y) / 2.0f;
+            case Z:
+                return (this.min.z + this.max.z) / 2.0f;
+            default:
+                return 0.0f;
+        }
     }
 
     public Vector3f getMin() {

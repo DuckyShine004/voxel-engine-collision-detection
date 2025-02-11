@@ -32,6 +32,12 @@ public class Player {
         this.initialise();
     }
 
+    public Player(float x, float y, float z) {
+        this.position = new Vector3f(x, y, z);
+
+        this.initialise();
+    }
+
     public Player(Vector3f position) {
         this.position = position;
 
@@ -59,11 +65,7 @@ public class Player {
         this.updateAABBMax();
     }
 
-    public void update(long window, float deltaTime) {
-        this.move(window, deltaTime);
-    }
-
-    public void move(long window, float deltaTime) {
+    public void updateVelocity(long window) {
         Vector3f up = this.camera.getUp();
         Vector3f front = this.camera.getFront();
 
@@ -90,8 +92,20 @@ public class Player {
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             this.velocity.sub(up);
         }
+        // this.updatePosition(deltaTime);
+    }
 
-        this.updatePosition(deltaTime);
+    public Vector3f getNextPosition(float deltaTime) {
+        Vector3f position = new Vector3f(this.position);
+
+        float speed = this.SPEED * deltaTime;
+
+        if (this.velocity.length() != 0.0f) {
+            position.add(this.velocity.normalize().mul(speed));
+            this.velocity.zero();
+        }
+
+        return position;
     }
 
     public void updatePosition(float deltaTime) {
@@ -101,6 +115,16 @@ public class Player {
             this.position.add(this.velocity.normalize().mul(speed));
             this.velocity.zero();
         }
+
+        this.camera.updateMatrices();
+    }
+
+    public void setPosition(Vector3f position) {
+        this.position.set(position);
+
+        this.updateAABB();
+
+        this.camera.setPosition(position);
 
         this.camera.updateMatrices();
     }
@@ -131,5 +155,9 @@ public class Player {
 
     public Vector3f getPosition() {
         return this.position;
+    }
+
+    public Vector3f getVelocity() {
+        return this.velocity;
     }
 }

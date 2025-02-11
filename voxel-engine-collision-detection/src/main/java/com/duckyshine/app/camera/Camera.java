@@ -76,6 +76,10 @@ public class Camera {
         this.initialiseAspectRatio();
     }
 
+    public void setPosition(Vector3f position) {
+        this.position = position;
+    }
+
     private void initialiseAspectRatio() {
         Display display = Display.get();
 

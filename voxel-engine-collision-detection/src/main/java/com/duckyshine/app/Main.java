@@ -37,10 +37,6 @@ public class Main {
 
     private Scene scene;
 
-    private Shader shader;
-
-    private Player player;
-
     private SoundPlayer soundPlayer;
 
     private void initialise() {
@@ -100,8 +96,6 @@ public class Main {
     private void initialiseSceneObjects() {
         this.scene = new Scene();
 
-        this.player = new Player();
-
         this.soundPlayer = new SoundPlayer();
     }
 
@@ -146,29 +140,21 @@ public class Main {
 
         this.lastTime = time;
 
-        this.player.update(this.window, deltaTime);
+        this.scene.update(this.window, deltaTime);
 
         this.soundPlayer.playMusic();
     }
 
     private void render() {
-        Camera camera = this.player.getCamera();
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        this.shader = AssetPool.getShader(ShaderType.WORLD.get());
-
-        this.shader.use();
-
-        this.shader.setMatrix4f("projectionViewMatrix", camera.getProjectionView());
 
         this.scene.render();
     }
 
     private void frameBufferSizeCallback(long window, int width, int height) {
-        Camera camera = this.player.getCamera();
+        Camera camera = this.scene.getCamera();
 
         glViewport(0, 0, width, height);
 
@@ -182,7 +168,7 @@ public class Main {
     }
 
     private void cursorPosCallback(long window, double mouseX, double mouseY) {
-        Camera camera = this.player.getCamera();
+        Camera camera = this.scene.getCamera();
 
         camera.rotate(mouseX, mouseY);
     }
