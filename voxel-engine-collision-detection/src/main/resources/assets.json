@@ -1,0 +1,9 @@
+{
+  "shaders": [
+    {
+      "key": "world",
+      "vertexShaderPath": "shaders/world.vert",
+      "fragmentShaderPath": "shaders/world.frag"
+    }
+  ]
+}
