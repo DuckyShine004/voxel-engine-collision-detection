@@ -9,6 +9,7 @@ import com.duckyshine.app.camera.Camera;
 
 import com.duckyshine.app.display.Display;
 import com.duckyshine.app.model.Atlas;
+import com.duckyshine.app.physics.controller.Player;
 import com.duckyshine.app.scene.Scene;
 
 import com.duckyshine.app.shader.Shader;
@@ -32,11 +33,13 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class Main {
     private long window;
 
+    private float lastTime;
+
     private Scene scene;
 
     private Shader shader;
 
-    private Camera camera;
+    private Player player;
 
     private SoundPlayer soundPlayer;
 
@@ -97,7 +100,7 @@ public class Main {
     private void initialiseSceneObjects() {
         this.scene = new Scene();
 
-        this.camera = new Camera();
+        this.player = new Player();
 
         this.soundPlayer = new SoundPlayer();
     }
@@ -116,6 +119,8 @@ public class Main {
     }
 
     private void run() {
+        this.lastTime = 0.0f;
+
         this.initialiseSceneObjects();
 
         createCapabilities();
@@ -137,12 +142,18 @@ public class Main {
     private void update() {
         float time = (float) glfwGetTime();
 
-        this.camera.update(this.window, time);
+        float deltaTime = time - this.lastTime;
+
+        this.lastTime = time;
+
+        this.player.update(this.window, deltaTime);
 
         this.soundPlayer.playMusic();
     }
 
     private void render() {
+        Camera camera = this.player.getCamera();
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -151,15 +162,17 @@ public class Main {
 
         this.shader.use();
 
-        this.shader.setMatrix4f("projectionViewMatrix", this.camera.getProjectionView());
+        this.shader.setMatrix4f("projectionViewMatrix", camera.getProjectionView());
 
         this.scene.render();
     }
 
     private void frameBufferSizeCallback(long window, int width, int height) {
+        Camera camera = this.player.getCamera();
+
         glViewport(0, 0, width, height);
 
-        this.camera.updateAspectRatio(width, height);
+        camera.updateAspectRatio(width, height);
     }
 
     private void keyCallback(long window, int key, int scanmode, int action, int mods) {
@@ -169,7 +182,9 @@ public class Main {
     }
 
     private void cursorPosCallback(long window, double mouseX, double mouseY) {
-        this.camera.rotate(mouseX, mouseY);
+        Camera camera = this.player.getCamera();
+
+        camera.rotate(mouseX, mouseY);
     }
 
     private void exit() {
