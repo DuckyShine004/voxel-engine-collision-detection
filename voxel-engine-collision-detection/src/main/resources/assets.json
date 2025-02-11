@@ -4,6 +4,11 @@
       "key": "world",
       "vertexShaderPath": "shaders/world.vert",
       "fragmentShaderPath": "shaders/world.frag"
+    },
+    {
+      "key": "aabb",
+      "vertexShaderPath": "shaders/aabb.vert",
+      "fragmentShaderPath": "shaders/aabb.frag"
     }
   ]
 }

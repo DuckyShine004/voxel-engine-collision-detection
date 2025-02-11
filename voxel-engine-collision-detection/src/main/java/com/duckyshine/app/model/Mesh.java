@@ -9,6 +9,10 @@ import com.duckyshine.app.math.Direction;
 
 import com.duckyshine.app.math.noise.Noise;
 
+import com.duckyshine.app.buffer.Buffer;
+import com.duckyshine.app.buffer.BufferData;
+import com.duckyshine.app.buffer.MeshBuffer;
+
 import com.duckyshine.app.debug.Debug;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -27,7 +31,7 @@ public class Mesh {
     private int[][] heightMap;
 
     public Mesh() {
-        this.buffer = new Buffer();
+        this.buffer = new MeshBuffer();
 
         this.quads = new ArrayList<>();
 
@@ -358,7 +362,9 @@ public class Mesh {
         float[] vertices = this.getMergedVertices();
         float[] coordinates = this.getMergedCoordinates();
 
-        this.buffer.setup(vertices, indices, coordinates, textures);
+        BufferData bufferData = new BufferData(vertices, indices, coordinates, textures);
+
+        this.buffer.setup(bufferData);
     }
 
     private int[] getMergedIndices() {

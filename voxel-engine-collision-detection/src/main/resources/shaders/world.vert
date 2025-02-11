@@ -8,9 +8,9 @@ out vec2 outTextureCoordinates;
 
 out vec4 outVertexColour;
 
-uniform mat4 projectionViewMatrix;
-
 flat out int outTextureIndex;
+
+uniform mat4 projectionViewMatrix;
 
 void main() {
     gl_Position = projectionViewMatrix * vec4(blockPositions, 1.0);
