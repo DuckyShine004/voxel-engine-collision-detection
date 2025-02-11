@@ -5,8 +5,10 @@ import org.joml.Vector3f;
 import com.duckyshine.app.math.Vector3;
 
 import com.duckyshine.app.camera.Camera;
-import com.duckyshine.app.debug.Debug;
+
 import com.duckyshine.app.physics.AABB;
+
+import com.duckyshine.app.debug.Debug;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -16,6 +18,10 @@ public class Player {
     private final float WIDTH = 0.8f;
     private final float DEPTH = 0.8f;
     private final float HEIGHT = 1.8f;
+
+    private final float CAMERA_OFFSET_X = 1.0f;
+    private final float CAMERA_OFFSET_Y = 2.0f;
+    private final float CAMERA_OFFSET_Z = -2.0f;
 
     private Vector3f position;
     private Vector3f velocity;
@@ -45,7 +51,7 @@ public class Player {
     }
 
     private void initialise() {
-        this.camera = new Camera(this.position);
+        this.camera = new Camera(this.getCameraPosition());
 
         this.dimension = new Vector3f(this.WIDTH, this.HEIGHT, this.DEPTH);
 
@@ -58,6 +64,16 @@ public class Player {
                 this.position.x + this.WIDTH / 2.0f,
                 this.position.y + this.HEIGHT,
                 this.position.z + this.DEPTH / 2.0f);
+    }
+
+    private Vector3f getCameraPosition() {
+        Vector3f cameraPosition = new Vector3f(this.position);
+
+        cameraPosition.x += this.CAMERA_OFFSET_X;
+        cameraPosition.y += this.CAMERA_OFFSET_Y;
+        cameraPosition.z += this.CAMERA_OFFSET_Z;
+
+        return cameraPosition;
     }
 
     public void updateAABB() {
@@ -92,7 +108,6 @@ public class Player {
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             this.velocity.sub(up);
         }
-        // this.updatePosition(deltaTime);
     }
 
     public Vector3f getNextPosition(float deltaTime) {
@@ -124,7 +139,7 @@ public class Player {
 
         this.updateAABB();
 
-        this.camera.setPosition(position);
+        this.camera.setPosition(this.getCameraPosition());
 
         this.camera.updateMatrices();
     }

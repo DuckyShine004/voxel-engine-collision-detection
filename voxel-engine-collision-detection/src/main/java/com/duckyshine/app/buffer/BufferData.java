@@ -15,6 +15,12 @@ public class BufferData {
         this.coordinates = coordinates;
     }
 
+    public BufferData(float[] vertices, int[] indices) {
+        this.indices = indices;
+
+        this.vertices = vertices;
+    }
+
     public int[] getIndices() {
         return this.indices;
     }

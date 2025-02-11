@@ -1,11 +1,16 @@
 package com.duckyshine.app.physics;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import org.joml.Vector3f;
 
+import com.duckyshine.app.buffer.AABBBuffer;
+import com.duckyshine.app.buffer.Buffer;
+import com.duckyshine.app.buffer.BufferData;
 import com.duckyshine.app.math.Axis;
 
 public class AABB {
-    private final int[] indices = {
+    private final int[] INDICES = {
             0, 1, 1, 2, 2, 3, 3, 0,
             4, 5, 5, 6, 6, 7, 7, 4,
             0, 4, 1, 5, 2, 6, 3, 7
@@ -14,14 +19,35 @@ public class AABB {
     private Vector3f min;
     private Vector3f max;
 
+    private Buffer aabbBuffer;
+
     public AABB(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
         this.min = new Vector3f(minX, minY, minZ);
         this.max = new Vector3f(maxX, maxY, maxZ);
+
+        this.aabbBuffer = new AABBBuffer();
     }
 
     public AABB(Vector3f min, Vector3f max) {
         this.min = min;
         this.max = max;
+
+        this.aabbBuffer = new AABBBuffer();
+    }
+
+    public float[] getVertices() {
+        float[] vertices = {
+                this.min.x, this.min.y, this.min.z,
+                this.max.x, this.min.y, this.min.z,
+                this.max.x, this.min.y, this.max.z,
+                this.min.x, this.min.y, this.max.z,
+                this.min.x, this.max.y, this.min.z,
+                this.max.x, this.max.y, this.min.z,
+                this.max.x, this.max.y, this.max.z,
+                this.min.x, this.max.y, this.max.z
+        };
+
+        return vertices;
     }
 
     public AABB getOffset(float offset, Axis axis) {
@@ -66,6 +92,18 @@ public class AABB {
             default:
                 return 0.0f;
         }
+    }
+
+    public void loadBuffer() {
+        BufferData bufferData = new BufferData(this.getVertices(), this.INDICES);
+
+        this.aabbBuffer.setup(bufferData);
+    }
+
+    public void render() {
+        glDrawElements(GL_LINES, this.INDICES.length, GL_UNSIGNED_INT, 0);
+
+        this.aabbBuffer.detachVertexArray();
     }
 
     public Vector3f getMin() {

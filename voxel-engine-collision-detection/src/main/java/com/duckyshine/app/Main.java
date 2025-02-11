@@ -118,9 +118,9 @@ public class Main {
     private void run() {
         this.lastTime = 0.0f;
 
-        this.initialiseSceneObjects();
-
         createCapabilities();
+
+        this.initialiseSceneObjects();
 
         this.initialiseSceneRenderingParameters();
 

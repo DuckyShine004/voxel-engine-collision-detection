@@ -5,6 +5,8 @@ import static org.lwjgl.opengl.GL30.*;
 public class AABBBuffer extends Buffer {
     public AABBBuffer() {
         super();
+
+        this.initialise();
     }
 
     private void initialise() {

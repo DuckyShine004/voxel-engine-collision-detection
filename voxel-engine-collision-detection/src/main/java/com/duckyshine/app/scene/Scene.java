@@ -42,7 +42,7 @@ public class Scene {
 
         this.player = new Player(0.0f, 20.0f, 0.0f);
 
-        this.shader = AssetPool.getShader(ShaderType.WORLD.get());
+        this.shader = AssetPool.getShader(ShaderType.WORLD.getName());
     }
 
     public Scene(Shader shader) {
@@ -184,20 +184,36 @@ public class Scene {
         this.checkCollisions(window, deltaTime);
     }
 
+    public void setShader(ShaderType shaderType) {
+        Camera camera = this.player.getCamera();
+
+        this.shader = AssetPool.getShader(shaderType.getName());
+
+        this.shader.use();
+
+        this.shader.setMatrix4f("projectionViewMatrix", camera.getProjectionView());
+    }
+
     public void render() {
-        this.useShader();
+        this.setShader(ShaderType.WORLD);
 
         for (Chunk chunk : chunks.values()) {
             Mesh mesh = chunk.getMesh();
 
             mesh.render();
         }
+
+        AABB aabb = this.player.getAABB();
+
+        aabb.loadBuffer();
+        this.setShader(ShaderType.AABB);
+        aabb.render();
     }
 
     private void useShader() {
         Camera camera = this.getCamera();
 
-        this.shader = AssetPool.getShader(ShaderType.WORLD.get());
+        this.shader = AssetPool.getShader(ShaderType.WORLD.getName());
 
         this.shader.use();
 
