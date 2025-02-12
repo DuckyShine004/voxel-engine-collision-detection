@@ -37,6 +37,10 @@ public class Block {
         Arrays.fill(this.isFaceActive, true);
     }
 
+    public void setAllFaceStatuses(boolean status) {
+        Arrays.fill(this.isFaceActive, status);
+    }
+
     public boolean isFaceActive(Direction direction) {
         return this.isFaceActive[direction.getIndex()];
     }

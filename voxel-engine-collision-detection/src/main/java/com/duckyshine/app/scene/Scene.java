@@ -94,6 +94,10 @@ public class Scene {
     }
 
     public Vector3i getChunkPosition(Vector3i position) {
+        if (position == null) {
+            return null;
+        }
+
         int x = (int) Math.floor((float) position.x / this.CHUNK_WIDTH) * this.CHUNK_WIDTH;
         int y = (int) Math.floor((float) position.y / this.CHUNK_HEIGHT) * this.CHUNK_HEIGHT;
         int z = (int) Math.floor((float) position.z / this.CHUNK_DEPTH) * this.CHUNK_DEPTH;
@@ -127,6 +131,21 @@ public class Scene {
         return this.isBlockActive(position);
     }
 
+    public void removeBlock(Vector3i position) {
+        Vector3i chunkPosition = this.getChunkPosition(position);
+
+        if (chunkPosition == null) {
+            return;
+        }
+
+        Chunk chunk = this.chunks.get(chunkPosition);
+
+        chunk.removeBlock(position);
+
+        // Reprocess all neighbouring chunks
+        chunk.regenerate();
+    }
+
     public Block getBlock(Vector3i position) {
         Vector3i chunkPosition = this.getChunkPosition(position);
 
@@ -158,7 +177,7 @@ public class Scene {
                     // Vector3i chunkPosition = this.getChunkPosition(position);
                     Vector3i blockPosition = this.getBlockPosition(position);
                     if (this.isBlockActive(x, y, z)) {
-                        Debug.debug(blockPosition);
+                        // Debug.debug(blockPosition);
                         return true;
                     }
                 }
@@ -199,6 +218,8 @@ public class Scene {
 
     public void update(long window, float deltaTime) {
         this.checkCollisions(window, deltaTime);
+
+        this.player.update(window, this);
     }
 
     public void setShader(ShaderType shaderType) {

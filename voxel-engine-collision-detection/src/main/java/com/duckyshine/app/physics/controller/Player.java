@@ -2,13 +2,15 @@ package com.duckyshine.app.physics.controller;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import com.duckyshine.app.math.Vector3;
 
 import com.duckyshine.app.camera.Camera;
 
 import com.duckyshine.app.physics.AABB;
-
+import com.duckyshine.app.physics.ray.Ray;
+import com.duckyshine.app.scene.Scene;
 import com.duckyshine.app.debug.Debug;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,6 +22,8 @@ public class Player {
     private final float WIDTH = 0.8f;
     private final float DEPTH = 0.8f;
     private final float HEIGHT = 1.8f;
+
+    private final float RAY_DISTANCE = 8.0f;
 
     private final float CAMERA_OFFSET_X = 1.0f;
     private final float CAMERA_OFFSET_Y = 2.0f;
@@ -139,8 +143,6 @@ public class Player {
     public void updateVelocity(long window, float deltaTime) {
         this.updateHorizontalVelocity(window, deltaTime);
         this.updateVerticalVelocity(window, deltaTime);
-
-        Debug.debug(this.velocity, this.isGrounded);
     }
 
     public Vector3f getNextPosition(float deltaTime) {
@@ -159,6 +161,25 @@ public class Player {
         this.camera.setPosition(this.getCameraPosition());
 
         this.camera.updateMatrices();
+    }
+
+    public void update(long window, Scene scene) {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            this.removeBlock(scene);
+        }
+    }
+
+    public void removeBlock(Scene scene) {
+        Vector3f origin = this.camera.getPosition();
+        Vector3f direction = this.camera.getFront();
+
+        Ray ray = new Ray(origin, direction, this.RAY_DISTANCE);
+
+        Vector3i position = ray.march(scene);
+
+        scene.removeBlock(position);
+
+        Debug.debug(position);
     }
 
     public void updateAABBMin() {

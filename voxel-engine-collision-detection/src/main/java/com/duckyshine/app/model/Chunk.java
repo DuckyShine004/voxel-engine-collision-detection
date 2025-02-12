@@ -1,5 +1,7 @@
 package com.duckyshine.app.model;
 
+import java.util.Vector;
+
 import org.joml.Vector3i;
 
 import com.duckyshine.app.math.Math;
@@ -37,8 +39,10 @@ public class Chunk {
 
     public void generate() {
         this.mesh.generate(this);
+    }
 
-        this.mesh.build();
+    public void regenerate() {
+        this.mesh.process(this);
     }
 
     public void setMesh(Mesh mesh) {
@@ -69,6 +73,14 @@ public class Chunk {
 
     public void addBlock(int x, int y, int z, BlockType blockType) {
         this.blocks[x][y][z] = new Block(x, y, z, blockType);
+    }
+
+    public void removeBlock(Vector3i position) {
+        this.removeBlock(position.x, position.y, position.z);
+    }
+
+    public void removeBlock(int x, int y, int z) {
+        this.blocks[x][y][z] = null;
     }
 
     public Block getBlock(int x, int y, int z) {

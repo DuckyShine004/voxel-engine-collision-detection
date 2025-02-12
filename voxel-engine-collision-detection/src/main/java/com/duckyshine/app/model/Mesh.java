@@ -73,9 +73,15 @@ public class Mesh {
             }
         }
 
+        this.process(chunk);
+    }
+
+    public void process(Chunk chunk) {
         this.cull(chunk);
 
         this.merge(chunk);
+
+        this.build();
     }
 
     private void cull(Chunk chunk) {
@@ -100,6 +106,8 @@ public class Mesh {
 
     private void cullFacesForBlock(Chunk chunk, Block block) {
         Vector3i position = block.getPosition();
+
+        block.setAllFaceStatuses(true);
 
         for (Direction direction : Direction.values()) {
             int dx = position.x + direction.getX();
@@ -314,6 +322,8 @@ public class Mesh {
         int depth = chunk.getDepth();
         int height = chunk.getHeight();
 
+        this.quads.clear();
+
         for (Direction direction : Direction.values()) {
             if (direction == Direction.TOP || direction == Direction.BOTTOM) {
                 this.mergeY(chunk, direction, width, height, depth);
@@ -365,6 +375,8 @@ public class Mesh {
         float[] coordinates = this.getMergedCoordinates();
 
         BufferData bufferData = new BufferData(vertices, indices, coordinates, textures);
+
+        this.buffer.cleanup();
 
         this.buffer.setup(bufferData);
     }
