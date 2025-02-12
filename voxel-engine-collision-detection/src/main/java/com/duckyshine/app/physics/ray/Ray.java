@@ -64,6 +64,11 @@ public class Ray {
             tDelta.z = Float.MAX_VALUE;
         }
 
+        return getFirstIntersection(scene, step, tMax, tDelta, position);
+    }
+
+    private Vector3i getFirstIntersection(Scene scene, Vector3i step, Vector3f tMax, Vector3f tDelta,
+            Vector3i position) {
         float t = 0.0f;
 
         while (t <= this.distance) {

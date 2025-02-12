@@ -31,6 +31,9 @@ public class Player {
 
     private boolean isGrounded;
 
+    private boolean isLeftMouseButtonClicked;
+    private boolean isRightMouseButtonClicked;
+
     private Vector3f position;
     private Vector3f velocity;
 
@@ -164,8 +167,39 @@ public class Player {
     }
 
     public void update(long window, Scene scene) {
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        this.placeBlock(window, scene);
+        this.removeBlock(window, scene);
+    }
+
+    public void placeBlock(long window, Scene scene) {
+        int clickState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+
+        if (clickState == GLFW_PRESS && !this.isRightMouseButtonClicked) {
+            this.placeBlock(scene);
+
+            this.isRightMouseButtonClicked = true;
+        }
+
+        if (clickState == GLFW_RELEASE && this.isRightMouseButtonClicked) {
+            this.isRightMouseButtonClicked = false;
+        }
+    }
+
+    public void placeBlock(Scene scene) {
+
+    }
+
+    public void removeBlock(long window, Scene scene) {
+        int clickState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+
+        if (clickState == GLFW_PRESS && !this.isLeftMouseButtonClicked) {
             this.removeBlock(scene);
+
+            this.isLeftMouseButtonClicked = true;
+        }
+
+        if (clickState == GLFW_RELEASE && this.isLeftMouseButtonClicked) {
+            this.isLeftMouseButtonClicked = false;
         }
     }
 
