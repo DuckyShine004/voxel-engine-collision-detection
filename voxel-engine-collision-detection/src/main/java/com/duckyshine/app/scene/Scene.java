@@ -101,13 +101,18 @@ public class Scene {
         return new Vector3i(x, y, z);
     }
 
-    public Vector3i getBlockPosition(Vector3i position, Vector3i chunkPosition) {
-        return position.sub(chunkPosition, new Vector3i());
+    // Expect world position
+    public Vector3i getBlockPosition(Vector3f position) {
+        int x = (int) Math.floor(position.x);
+        int y = (int) Math.floor(position.y);
+        int z = (int) Math.floor(position.z);
+
+        return new Vector3i(x % this.CHUNK_WIDTH, y % this.CHUNK_HEIGHT, z % this.CHUNK_DEPTH);
     }
 
     public boolean isBlockActive(Vector3i position) {
         Vector3i chunkPosition = this.getChunkPosition(position);
-        Vector3i blockPosition = this.getBlockPosition(position, chunkPosition);
+        Vector3i blockPosition = this.getBlockPosition(new Vector3f(position));
 
         Chunk chunk = this.getChunk(chunkPosition);
 
@@ -127,7 +132,7 @@ public class Scene {
 
         Chunk chunk = this.getChunk(chunkPosition);
 
-        Vector3i blockPosition = this.getBlockPosition(position, chunkPosition);
+        Vector3i blockPosition = this.getBlockPosition(new Vector3f(position));
 
         return chunk.getBlock(blockPosition);
     }
@@ -140,15 +145,20 @@ public class Scene {
         int minY = (int) Math.floor(min.y);
         int minZ = (int) Math.floor(min.z);
 
-        int maxX = (int) Math.ceil(max.x);
-        int maxY = (int) Math.ceil(max.y);
-        int maxZ = (int) Math.ceil(max.z);
+        int maxX = (int) Math.floor(max.x);
+        int maxY = (int) Math.floor(max.y);
+        int maxZ = (int) Math.floor(max.z);
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     // Debug.debug(this.player.getPosition());
+
+                    Vector3f position = new Vector3f(x, y, z);
+                    // Vector3i chunkPosition = this.getChunkPosition(position);
+                    Vector3i blockPosition = this.getBlockPosition(position);
                     if (this.isBlockActive(x, y, z)) {
+                        Debug.debug(blockPosition);
                         return true;
                     }
                 }
@@ -208,16 +218,6 @@ public class Scene {
         aabb.loadBuffer();
         this.setShader(ShaderType.AABB);
         aabb.render();
-    }
-
-    private void useShader() {
-        Camera camera = this.getCamera();
-
-        this.shader = AssetPool.getShader(ShaderType.WORLD.getName());
-
-        this.shader.use();
-
-        this.shader.setMatrix4f("projectionViewMatrix", camera.getProjectionView());
     }
 
     public void cleanup() {

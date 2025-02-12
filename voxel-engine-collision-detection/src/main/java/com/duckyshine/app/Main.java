@@ -11,16 +11,10 @@ import com.duckyshine.app.display.Display;
 
 import com.duckyshine.app.model.texture.Atlas;
 
-import com.duckyshine.app.physics.controller.Player;
-
 import com.duckyshine.app.scene.Scene;
-
-import com.duckyshine.app.shader.Shader;
-import com.duckyshine.app.shader.ShaderType;
 
 import com.duckyshine.app.sound.SoundPlayer;
 
-import com.duckyshine.app.asset.AssetPool;
 import com.duckyshine.app.asset.AssetLoader;
 
 import com.duckyshine.app.debug.Debug;
@@ -167,6 +161,20 @@ public class Main {
     private void keyCallback(long window, int key, int scanmode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             this.exit();
+        }
+
+        if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+            this.toggleCursorMode();
+        }
+    }
+
+    private void toggleCursorMode() {
+        int cursorMode = glfwGetInputMode(this.window, GLFW_CURSOR);
+
+        if (cursorMode == GLFW_CURSOR_DISABLED) {
+            glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
     }
 
