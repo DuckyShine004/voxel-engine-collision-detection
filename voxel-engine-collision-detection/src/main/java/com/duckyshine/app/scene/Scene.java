@@ -169,7 +169,7 @@ public class Scene {
     }
 
     public void checkCollisions(long window, float deltaTime) {
-        this.player.updateVelocity(window);
+        this.player.updateVelocity(window, deltaTime);
 
         Vector3f position = this.player.getPosition();
         Vector3f target = this.player.getNextPosition(deltaTime);
@@ -186,8 +186,15 @@ public class Scene {
 
         AABB offsetAABB = aabb.getOffset(target - position, axis);
 
-        return this.isColliding(offsetAABB) ? position : target;
+        boolean isColliding = this.isColliding(offsetAABB);
 
+        if (axis == Axis.Y && isColliding && target <= position) {
+            this.player.setIsGrounded(true);
+        } else if (axis == Axis.Y) {
+            this.player.setIsGrounded(false);
+        }
+
+        return isColliding ? position : target;
     }
 
     public void update(long window, float deltaTime) {

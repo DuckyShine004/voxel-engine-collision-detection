@@ -1,5 +1,6 @@
 package com.duckyshine.app.physics.controller;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import com.duckyshine.app.math.Vector3;
@@ -14,6 +15,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Player {
     private final float SPEED = 10.0f;
+    private final float GRAVITY = 9.81f;
 
     private final float WIDTH = 0.8f;
     private final float DEPTH = 0.8f;
@@ -22,6 +24,8 @@ public class Player {
     private final float CAMERA_OFFSET_X = 1.0f;
     private final float CAMERA_OFFSET_Y = 2.0f;
     private final float CAMERA_OFFSET_Z = -2.0f;
+
+    private boolean isGrounded;
 
     private Vector3f position;
     private Vector3f velocity;
@@ -66,6 +70,18 @@ public class Player {
                 this.position.z + this.DEPTH / 2.0f);
     }
 
+    public void setIsGrounded(boolean isGrounded) {
+        this.isGrounded = isGrounded;
+
+        if (isGrounded) {
+            this.velocity.y = 0.0f;
+        }
+    }
+
+    public boolean getIsGrounded() {
+        return this.isGrounded;
+    }
+
     private Vector3f getCameraPosition() {
         Vector3f cameraPosition = new Vector3f(this.position);
 
@@ -81,57 +97,58 @@ public class Player {
         this.updateAABBMax();
     }
 
-    public void updateVelocity(long window) {
-        Vector3f up = this.camera.getUp();
+    public void updateHorizontalVelocity(long window, float deltaTime) {
         Vector3f front = this.camera.getFront();
+        Vector3f right = this.camera.getRight();
 
+        Vector3f velocity = new Vector3f();
+
+        // another issue is that forward and back vel are reliant on camera vector
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            this.velocity.add(front);
+            velocity.add(front);
         }
 
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            this.velocity.sub(front);
+            velocity.sub(front);
         }
 
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            this.velocity.add(Vector3.cross(front, up).normalize());
+            velocity.add(right);
         }
 
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            this.velocity.sub(Vector3.cross(front, up).normalize());
+            velocity.sub(right);
         }
 
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            this.velocity.add(up);
+        if (velocity.length() != 0.0f) {
+            velocity.normalize().mul(this.SPEED);
         }
 
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            this.velocity.sub(up);
+        this.velocity.x = velocity.x;
+        this.velocity.z = velocity.z;
+    }
+
+    public void updateVerticalVelocity(long window, float deltaTime) {
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && this.isGrounded) {
+            this.velocity.y = 8.0f;
         }
+
+        this.velocity.y -= GRAVITY * deltaTime;
+    }
+
+    public void updateVelocity(long window, float deltaTime) {
+        this.updateHorizontalVelocity(window, deltaTime);
+        this.updateVerticalVelocity(window, deltaTime);
+
+        Debug.debug(this.velocity, this.isGrounded);
     }
 
     public Vector3f getNextPosition(float deltaTime) {
         Vector3f position = new Vector3f(this.position);
 
-        float speed = this.SPEED * deltaTime;
-
-        if (this.velocity.length() != 0.0f) {
-            position.add(this.velocity.normalize().mul(speed));
-            this.velocity.zero();
-        }
+        position.add(Vector3.mul(deltaTime, this.velocity));
 
         return position;
-    }
-
-    public void updatePosition(float deltaTime) {
-        float speed = this.SPEED * deltaTime;
-
-        if (this.velocity.length() != 0.0f) {
-            this.position.add(this.velocity.normalize().mul(speed));
-            this.velocity.zero();
-        }
-
-        this.camera.updateMatrices();
     }
 
     public void setPosition(Vector3f position) {

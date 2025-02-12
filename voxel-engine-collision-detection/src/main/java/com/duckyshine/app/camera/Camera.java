@@ -140,6 +140,12 @@ public class Camera {
         return this.front;
     }
 
+    public Vector3f getRight() {
+        Vector3f right = this.front.cross(this.up, new Vector3f());
+
+        return right.normalize();
+    }
+
     public Vector3f getPosition() {
         return this.position;
     }
