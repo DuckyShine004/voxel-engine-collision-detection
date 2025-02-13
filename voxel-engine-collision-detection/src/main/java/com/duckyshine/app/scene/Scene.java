@@ -9,7 +9,7 @@ import org.joml.Vector3i;
 import com.duckyshine.app.physics.AABB;
 
 import com.duckyshine.app.physics.controller.Player;
-
+import com.duckyshine.app.physics.ray.RayResult;
 import com.duckyshine.app.asset.AssetPool;
 
 import com.duckyshine.app.camera.Camera;
@@ -18,6 +18,7 @@ import com.duckyshine.app.math.Axis;
 
 import com.duckyshine.app.model.Mesh;
 import com.duckyshine.app.model.Block;
+import com.duckyshine.app.model.BlockType;
 import com.duckyshine.app.model.Chunk;
 
 import com.duckyshine.app.shader.Shader;
@@ -143,6 +144,23 @@ public class Scene {
         chunk.removeBlock(position);
 
         // Reprocess all neighbouring chunks
+        chunk.regenerate();
+    }
+
+    public void addBlock(RayResult rayResult) {
+        Vector3i axes = rayResult.getAxes();
+        Vector3i position = rayResult.getPosition();
+
+        Vector3i chunkPosition = this.getChunkPosition(position);
+
+        if (chunkPosition == null) {
+            return;
+        }
+
+        Chunk chunk = this.chunks.get(chunkPosition);
+
+        chunk.addBlock(position.add(axes, new Vector3i()), BlockType.GRASS);
+
         chunk.regenerate();
     }
 

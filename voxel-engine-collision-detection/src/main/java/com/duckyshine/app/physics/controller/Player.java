@@ -5,11 +5,13 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import com.duckyshine.app.math.Vector3;
-
+import com.duckyshine.app.model.Block;
+import com.duckyshine.app.model.BlockType;
 import com.duckyshine.app.camera.Camera;
 
 import com.duckyshine.app.physics.AABB;
 import com.duckyshine.app.physics.ray.Ray;
+import com.duckyshine.app.physics.ray.RayResult;
 import com.duckyshine.app.scene.Scene;
 import com.duckyshine.app.debug.Debug;
 
@@ -167,15 +169,15 @@ public class Player {
     }
 
     public void update(long window, Scene scene) {
-        this.placeBlock(window, scene);
+        this.addBlock(window, scene);
         this.removeBlock(window, scene);
     }
 
-    public void placeBlock(long window, Scene scene) {
+    public void addBlock(long window, Scene scene) {
         int clickState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
 
         if (clickState == GLFW_PRESS && !this.isRightMouseButtonClicked) {
-            this.placeBlock(scene);
+            this.addBlock(scene);
 
             this.isRightMouseButtonClicked = true;
         }
@@ -185,8 +187,15 @@ public class Player {
         }
     }
 
-    public void placeBlock(Scene scene) {
+    public void addBlock(Scene scene) {
+        Vector3f origin = this.camera.getPosition();
+        Vector3f direction = this.camera.getFront();
 
+        Ray ray = new Ray(origin, direction, this.RAY_DISTANCE);
+
+        RayResult rayResult = ray.cast(scene);
+
+        scene.addBlock(rayResult);
     }
 
     public void removeBlock(long window, Scene scene) {
@@ -209,11 +218,9 @@ public class Player {
 
         Ray ray = new Ray(origin, direction, this.RAY_DISTANCE);
 
-        Vector3i position = ray.march(scene);
+        RayResult rayResult = ray.cast(scene);
 
-        scene.removeBlock(position);
-
-        Debug.debug(position);
+        scene.removeBlock(rayResult.getPosition());
     }
 
     public void updateAABBMin() {

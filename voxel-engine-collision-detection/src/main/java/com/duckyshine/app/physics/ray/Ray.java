@@ -3,6 +3,7 @@ package com.duckyshine.app.physics.ray;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import com.duckyshine.app.debug.Debug;
 import com.duckyshine.app.scene.Scene;
 
 public class Ray {
@@ -18,7 +19,7 @@ public class Ray {
         this.direction = direction;
     }
 
-    public Vector3i march(Scene scene) {
+    public RayResult cast(Scene scene) {
         Vector3i step = new Vector3i();
         Vector3i position = this.getBlockPosition();
 
@@ -64,10 +65,59 @@ public class Ray {
             tDelta.z = Float.MAX_VALUE;
         }
 
-        return getFirstIntersection(scene, step, tMax, tDelta, position);
+        return this.getRayResult(scene, step, tMax, tDelta, position);
     }
 
-    private Vector3i getFirstIntersection(Scene scene, Vector3i step, Vector3f tMax, Vector3f tDelta,
+    private RayResult getRayResult(Scene scene, Vector3i step, Vector3f tMax, Vector3f tDelta, Vector3i position) {
+        RayResult rayResult = new RayResult();
+
+        Vector3i axes = new Vector3i();
+
+        float t = 0.0f;
+
+        boolean isIntersectionFound = false;
+
+        while (t <= this.distance) {
+            if (scene.isBlockActive(position)) {
+                rayResult.setPosition(position);
+
+                isIntersectionFound = true;
+
+                break;
+            }
+
+            if (tMax.x < tMax.y && tMax.x < tMax.z) {
+                position.x += step.x;
+                t = tMax.x;
+                tMax.x += tDelta.x;
+                axes.zero();
+                axes.x = -step.x;
+            } else if (tMax.y < tMax.z) {
+                position.y += step.y;
+                t = tMax.y;
+                tMax.y += tDelta.y;
+                axes.zero();
+                axes.y = -step.y;
+            } else {
+                position.z += step.z;
+                t = tMax.z;
+                tMax.z += tDelta.z;
+                axes.zero();
+                axes.z = -step.z;
+            }
+        }
+
+        if (isIntersectionFound) {
+            rayResult.setPosition(position);
+        }
+
+        rayResult.setAxes(axes);
+
+        return rayResult;
+    }
+
+    // Refactor params
+    private Vector3i getPositionOfFirstIntersection(Scene scene, Vector3i step, Vector3f tMax, Vector3f tDelta,
             Vector3i position) {
         float t = 0.0f;
 
